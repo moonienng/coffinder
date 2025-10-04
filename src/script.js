@@ -1,6 +1,6 @@
 const apiKey = "AIzaSyCzXEsaBNRMWyCe-OEP591I_tULrktxZfI";
 const useProxy = true;
-const proxy = "https://api.allorigins.win/raw?url=";
+const proxy = "https://corsproxy.io/?";
 
 function getLocation() {
   const cache = JSON.parse(localStorage.getItem('cachedLocation') || '{}');
@@ -14,24 +14,25 @@ function getLocation() {
       const lng = pos.coords.longitude;
       localStorage.setItem('cachedLocation', JSON.stringify({ lat, lng, timestamp: now }));
       useLocation(lat, lng);
-    }, () => alert("Location access denied or unavailable."));
+    }, () => alert("Permissão de localização negada ou indisponível."));
   }
 }
 
 async function useLocation(lat, lng) {
   const endpoint = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${lat},${lng}&radius=1500&type=cafe&key=${apiKey}`;
-  const url = useProxy ? proxy + endpoint : endpoint;
+  const url = useProxy ? proxy + encodeURIComponent(endpoint) : endpoint;
+  
   try {
     const response = await fetch(url);
     const data = await response.json();
     if (data.results && data.results.length > 0) {
       displayCards(data.results);
     } else {
-      alert("No cafes found.");
+      alert("Nenhuma cafeteria encontrada na sua área.");
     }
   } catch (e) {
     console.error("Error fetching Places API:", e);
-    alert("Error fetching cafes.");
+    alert("Erro ao buscar cafés. Tente novamente.");
   }
 }
 
@@ -89,9 +90,9 @@ function saveCafe(cafe) {
   if (!saved.find(c => c.place_id === cafe.place_id)) {
     saved.push(cafe);
     localStorage.setItem('savedCafes', JSON.stringify(saved));
-    alert(`${cafe.name} saved! 💖`);
+    alert(`${cafe.name} salvo! 💖`);
   } else {
-    alert(`${cafe.name} is already saved.`);
+    alert(`${cafe.name} já está salvo.`);
   }
 }
 
@@ -101,7 +102,7 @@ function showSaved() {
   const saved = JSON.parse(localStorage.getItem('savedCafes') || '[]');
   
   if (saved.length === 0) {
-    container.innerHTML = '<p>No saved cafes yet 😢</p>';
+    container.innerHTML = '<p>Nenhum café salvo ainda 😢</p>';
     return;
   }
   
