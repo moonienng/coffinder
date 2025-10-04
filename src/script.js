@@ -1,6 +1,6 @@
 const apiKey = "AIzaSyCzXEsaBNRMWyCe-OEP591I_tULrktxZfI";
 const useProxy = true;
-const proxy = "https://cors-anywhere.herokuapp.com";
+const proxy = "https://api.allorigins.win/raw?url=";
 
 function getLocation() {
   const cache = JSON.parse(localStorage.getItem('cachedLocation') || '{}');
